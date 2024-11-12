@@ -11,6 +11,6 @@ The data for this visualization is sourced from: https://data.world/makeovermond
 
 Getting Started:
 
-	1.	Clone this repository.
-	2.	Install the required packages.
-	3.	Run the application to launch the interactive website.
+1. Clone this repository.
+2. Install the required packages.
+3. Run the application to launch the interactive website.
