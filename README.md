@@ -1,3 +1,4 @@
+# Global Natural Gas Production Visualization
 This project creates an interactive website to visualize global natural gas production data.
 
 ## Features
