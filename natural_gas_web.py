@@ -3,11 +3,14 @@ import plotly.express as px
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+from matplotlib.animation import FuncAnimation
 
 st.set_page_config(
     page_title = 'Global natural gas production map',
     layout = "wide")
+
 
 ## helper function
 def get_df(natural_gas_df, cumu_df):
@@ -90,6 +93,68 @@ def get_year_df(df, year):
 def merge_geo(world, df_y):
     df_y_map = world.merge(df_y, how='left', left_on='SOVEREIGNT', right_on='Country')
     return df_y_map
+
+def create_gif(df, world):
+    # reference: https://youtu.be/Wyp1fH9txsE?si=MCYHygPr9tUHz63_
+    # Set up the figure and axis
+    fig, ax = plt.subplots(figsize=(15, 10))
+    world.plot(ax=ax, color='lightgrey')  # Plot base map
+    df_1 = df[(df['Year']!='1900-2022') & (df['Country']!='World')]
+    years = sorted(df_1['Year'].unique())
+    df_1['Value'] = pd.to_numeric(df_1['Value'], errors='coerce')
+    df_1 = df_1.dropna(subset=['Value']) 
+    vmin, vmax = 0, df_1['Value'].max()
+    # print(f'vmax: {vmax}')
+    sm = plt.cm.ScalarMappable(cmap='OrRd', norm=plt.Normalize(vmin=vmin, vmax=vmax))
+    cbar = fig.colorbar(sm, ax=ax, orientation='horizontal', pad=0.1, shrink=0.3)
+    cbar.set_label("Year production (EJ)", fontsize=8)
+    cbar.ax.set_position([0.15, 0.4, 0.2, 0.1]) 
+    
+    # Define the custom color scale
+    custom_colors = [
+        [0, '#F2E1A3'],
+        [0.033, '#F2D07A'],
+        [0.067, '#F1BD56'],
+        [0.1, '#F0A637'],
+        [0.134, '#F07F1D'],
+        [0.34, '#E86D14'],
+        [0.48, '#E35710'],
+        [0.68, '#D83D0D'],
+        [1, '#D12608']
+    ]
+    # cmap = LinearSegmentedColormap.from_list('custom_cmap', [color[1] for color in custom_colors], N=256)
+    original_cmap = plt.cm.OrRd
+    colors = original_cmap(np.linspace(0.1, 1, 256))  # Skip the first 10% (white)
+    new_cmap = mcolors.LinearSegmentedColormap.from_list('OrRd_no_white', colors)
+
+    def animate(idx):
+        ax.clear()  
+        world.plot(ax=ax, color='lightgrey') 
+        
+        year = years[idx]
+        # print(f'idx: {idx}; year: {year}')
+        df_year = df[df['Year'] == year]
+        # print(f'got df_year for {year}!')
+        df_world = world.merge(df_year, left_on='SOVEREIGNT', right_on='Country', how='left')
+        
+        df_world.plot(column='Value', ax=ax, legend=False, vmin=vmin, vmax=vmax, 
+                    #   cmap=cmap
+                    # cmap = 'OrRd'
+                    cmap = new_cmap
+                      )
+        
+        print(f'Finish df_world plot for year {year}!')
+        
+        ax.set_title(f"Year: {year}", fontsize=16)
+        ax.axis('off') 
+
+    ani = FuncAnimation(fig, animate, frames=len(years), interval=5) 
+    
+    # Save animation as a GIF
+    gif_path = "../data/animated_map.gif"
+    ani.save(gif_path, writer='pillow', fps=2)
+    
+    return gif_path
 
 def extract_yearly_data(df_y):
     world_production = df_y.loc[df_y['Country'] == 'World', 'Value'].values[0]
@@ -187,48 +252,50 @@ def draw_color_map(df_y_map, year):
         
     return fig        
 
-# main function
-natural_gas_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data line chart')
-cumu_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data for map')
-world = gpd.read_file("../data/countries/ne_110m_admin_0_countries.shp") # change it into your file path
 
-df = get_df(natural_gas_df, cumu_df)
-
-menu = ['Cumulative production', 'Annual production', 'Production trends']
-choice = st.sidebar.selectbox('Select View for Natural Gas Production', menu)
-if choice =='Cumulative production':
-    st.title('Cumulative Natural Gas Production Map')
-    # st.header('Cumulative production')
-    df_cumu = get_year_df(df, '1900-2022')
-    world_production, country_1, value_1, country_2, value_2 = extract_cumulative_data(cumu_df)
-    st.write(f'The cumulative production of world from 1900 to 2022 is {world_production} EJ.')
-    st.write(f'{country_1} has the highest cumulative natural gas production at {value_1} EJ, followed by {country_2} with {value_2} EJ.')
-    fig = draw_color_map(df_cumu, '1900-2022')
-    st.plotly_chart(fig, use_container_width=True)
+if __name__ == "__main__":
+    natural_gas_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data line chart')
+    cumu_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data for map')
+    world = gpd.read_file("../data/countries/ne_110m_admin_0_countries.shp") # change it into your file path
     
-elif choice == 'Annual production':
-    st.title("Annual Natural Gas Production")
-    st.header("Production Amount and Growth Rate from Previous Year")
-    year = st.slider('Select a year to display', 1900, 2022, step=1, value=2022)
-    df_y = get_year_df(df, year)
+    df = get_df(natural_gas_df, cumu_df)
+    gif_path = create_gif(df, world)
     
-    max_country, max_value, percentage = extract_yearly_data(df_y)
-    st.write('\n')
-    st.write(f"In {year}, {max_country} produced the most natural gas of {max_value:.3f} EJ, accounting for {percentage:.2f}% of the world production during that year.")
-    st.write(f"In today's scale, {max_value:.3f} EJ can supply the entire world's electricity consumption for about {max_value/1.7:.1f} days.")
+    menu = ['Cumulative production', 'Annual production', 'Production trends']
+    choice = st.sidebar.selectbox('Select View for Natural Gas Production', menu)
+    if choice =='Cumulative production':
+        st.title('Cumulative Natural Gas Production Map')
+        # st.header('Cumulative production')
+        df_cumu = get_year_df(df, '1900-2022')
+        world_production, country_1, value_1, country_2, value_2 = extract_cumulative_data(cumu_df)
+        st.write(f'The cumulative production of world from 1900 to 2022 is {world_production} EJ.')
+        st.write(f'{country_1} has the highest cumulative natural gas production at {value_1} EJ, followed by {country_2} with {value_2} EJ.')
+        fig = draw_color_map(df_cumu, '1900-2022')
+        st.plotly_chart(fig, use_container_width=True)
+        
+    elif choice == 'Annual production':
+        st.title("Annual Natural Gas Production")
+        st.header("Production Amount and Growth Rate from Previous Year")
+        year = st.slider('Select a year to display', 1900, 2022, step=1, value=2022)
+        df_y = get_year_df(df, year)
+        
+        max_country, max_value, percentage = extract_yearly_data(df_y)
+        st.write('\n')
+        st.write(f"In {year}, {max_country} produced the most natural gas of {max_value:.3f} EJ, accounting for {percentage:.2f}% of the world production during that year.")
+        st.write(f"In today's scale, {max_value:.3f} EJ can supply the entire world's electricity consumption for about {max_value/1.7:.1f} days.")
+        
+        df_y_map = merge_geo(world, df_y)
+        fig = draw_color_map(df_y_map, year)
+        st.plotly_chart(fig, use_container_width=True)
     
-    df_y_map = merge_geo(world, df_y)
-    fig = draw_color_map(df_y_map, year)
-    st.plotly_chart(fig, use_container_width=True)
-
-else:
-    st.title('Global Natural Gas Production Trend')
-    st.write('Natural gas production globally saw a significant increase starting in the 1930s, with many countries beginning to tap into their natural gas resources.')
-    st.write('By the 1950s, production experienced a sharp jump due to advancements in extraction technologies and rising energy demands. \nThe 1970s marked another surge in production, driven by the oil crises and increased focus on alternative energy sources.')
-    st.write('From the 1980s onwards, production continued to grow steadily, with major producers expanding their capacity and emerging markets starting to contribute more significantly to global output.\n')
-    st.header('History of natural gas production, 1900-2022')
-    gif_path = "../data/animated_map.gif"
-    st.image(gif_path, use_column_width=True)
+    else:
+        st.title('Global Natural Gas Production Trend')
+        st.write('Natural gas production globally saw a significant increase starting in the 1930s, with many countries beginning to tap into their natural gas resources.')
+        st.write('By the 1950s, production experienced a sharp jump due to advancements in extraction technologies and rising energy demands. \nThe 1970s marked another surge in production, driven by the oil crises and increased focus on alternative energy sources.')
+        st.write('From the 1980s onwards, production continued to grow steadily, with major producers expanding their capacity and emerging markets starting to contribute more significantly to global output.\n')
+        st.header('History of natural gas production, 1900-2022')
+        # gif_path = "../data/animated_map.gif"
+        st.image(gif_path, use_column_width=True)
 
 
 
