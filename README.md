@@ -8,6 +8,7 @@ Features:
 Data Source:
 
 The data for this visualization is sourced from: https://data.world/makeovermonday/week-27-what-to-watch-in-2024-energy.
+Map data is source from: 
 
 Getting Started:
 
