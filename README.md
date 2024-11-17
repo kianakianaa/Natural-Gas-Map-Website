@@ -18,7 +18,7 @@ This project creates an interactive website to visualize global natural gas prod
 ![trend](data/image/trend.png)
 
 5.  Gif for Production Trend
-![gif](data/image/animated_map.gif)
+![gif](data/animated_map.gif)
 
 ## Data Source
 
