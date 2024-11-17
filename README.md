@@ -10,10 +10,15 @@ This project creates an interactive website to visualize global natural gas prod
 
 1.	Cumulative Production: Overview of total output.
 ![cumu](data/image/cumu.png)
-2.	Annual Production: Displayed using an interactive slider.
+
+3.	Annual Production: Displayed using an interactive slider.
 ![annual](data/image/slider.png)
-3.	Production Trend: Illustrated through an animated GIF.
+
+4.	Production Trend: Illustrated through an animated GIF.
 ![trend](data/image/trend.png)
+
+5.  Gif for Production Trend
+![gif](data/image/animated_map.gif)
 
 ## Data Source
 
