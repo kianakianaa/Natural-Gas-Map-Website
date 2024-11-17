@@ -19,7 +19,6 @@ This project creates an interactive website to visualize global natural gas prod
 
 5.  Gif for Production Trend
 ![gif](data/animated_map.gif)
-
 ## Data Source
 
 - The data for this visualization is sourced from: https://data.world/makeovermonday/week-27-what-to-watch-in-2024-energy.
