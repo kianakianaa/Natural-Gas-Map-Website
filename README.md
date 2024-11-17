@@ -6,6 +6,14 @@ This project creates an interactive website to visualize global natural gas prod
 - Selectable views in the sidebar: cumulative production (1900-2022), annual production, and production trends across countries (GIF format).
 - Interactive filters and options for in-depth data exploration
 
+## Screenshot of Website Views
+
+1.	Cumulative Production: Overview of total output.
+
+2.	Annual Production: Displayed using an interactive slider.
+
+3.	Production Trend: Illustrated through an animated GIF.
+
 ## Data Source
 
 - The data for this visualization is sourced from: https://data.world/makeovermonday/week-27-what-to-watch-in-2024-energy.
