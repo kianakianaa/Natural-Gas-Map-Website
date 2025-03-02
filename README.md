@@ -1,6 +1,9 @@
 # Global Natural Gas Production Visualization
 This project creates an interactive website to visualize global natural gas production data.
 
+## Live Demo
+The website is deployed on Streamlit Community Cloud. Check it out here:: [Website](https://natural-gas-map-website-eimbrmx5kh5senbrndfkax.streamlit.app)
+
 ## Features
 
 - Selectable views in the sidebar: cumulative production (1900-2022), annual production, and production trends across countries (GIF format).
