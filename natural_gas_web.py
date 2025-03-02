@@ -151,7 +151,7 @@ def create_gif(df, world):
     ani = FuncAnimation(fig, animate, frames=len(years), interval=5) 
     
     # Save animation as a GIF
-    gif_path = "../data/animated_map.gif"
+    gif_path = "./data/image/animated_map.gif"
     ani.save(gif_path, writer='pillow', fps=2)
     
     return gif_path
