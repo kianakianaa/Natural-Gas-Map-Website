@@ -2,7 +2,7 @@
 This project creates an interactive website to visualize global natural gas production data.
 
 ## Live Demo
-The website is deployed on Streamlit Community Cloud. Check it out here:: [Website](https://natural-gas-map-website-eimbrmx5kh5senbrndfkax.streamlit.app)
+The website is deployed on Streamlit Community Cloud. Check it out here: [Website](https://natural-gas-map-website-eimbrmx5kh5senbrndfkax.streamlit.app)
 
 ## Features
 
