@@ -223,7 +223,7 @@ def draw_color_map(df_y_map, year):
     fig.update_layout(
         margin={"r": 0, "l": 0}, # improvement: adjust margin to make the empty space less
         coloraxis_colorbar=dict(
-            title=dict(text=""<b>Production amount (EJ)</b>" if year!='1900-2022' else "<b>Cumulative production (EJ)</b>", font=dict(size=12)),
+            title=dict(text="<b>Production amount (EJ)</b>" if year!='1900-2022' else "<b>Cumulative production (EJ)</b>", font=dict(size=12)),
             tickfont=dict(size=9.5),  # Customize font size of the tick labels
             orientation="h",
             len=0.35,  # Adjust length of the color bar
