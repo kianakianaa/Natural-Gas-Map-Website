@@ -263,7 +263,9 @@ if __name__ == "__main__":
     world = gpd.read_file("./data/countries/ne_110m_admin_0_countries.shp") # change it into your file path
     
     df = get_df(natural_gas_df, cumu_df)
-    gif_path = create_gif(df, world)
+    gif_path = "./data/animated_map.gif"
+    if not os.path.exists(gif_path):
+        gif_path = create_gif(df, world)
     
     menu = ['Cumulative production', 'Annual production', 'Production trends']
     choice = st.sidebar.selectbox('Select View for Natural Gas Production', menu)
