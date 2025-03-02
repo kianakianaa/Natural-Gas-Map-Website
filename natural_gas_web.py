@@ -254,9 +254,9 @@ def draw_color_map(df_y_map, year):
 
 
 if __name__ == "__main__":
-    natural_gas_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data line chart')
-    cumu_df = pd.read_excel('../data/The history of global natural gas production.xlsx', sheet_name = 'data for map')
-    world = gpd.read_file("../data/countries/ne_110m_admin_0_countries.shp") # change it into your file path
+    natural_gas_df = pd.read_excel('./data/The history of global natural gas production.xlsx', sheet_name = 'data line chart')
+    cumu_df = pd.read_excel('./data/The history of global natural gas production.xlsx', sheet_name = 'data for map')
+    world = gpd.read_file("./data/countries/ne_110m_admin_0_countries.shp") # change it into your file path
     
     df = get_df(natural_gas_df, cumu_df)
     gif_path = create_gif(df, world)
